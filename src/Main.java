@@ -2,6 +2,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        Rede rede = new Rede();
+
         String IP_HOST_1 = "123.456";
         String IP_HOST_2 = "123.654";
 
@@ -13,10 +15,12 @@ public class Main {
         Computador host2 = new Computador(IP_HOST_2, MAC_ADRESS_H2);
 
         Switch switch1 = new Switch();
-        switch1.addHost(1,host1);
-        switch1.addHost(2,host2);
+        rede.createConnect(switch1,host1);
 
-        host1.sendMessage("oi", IP_HOST_2);
+//        switch1.addHost(1,host1);
+//        switch1.addHost(2,host2);
+
+        rede.receive(host1.sendMessage("oi", IP_HOST_2));
 
 
     }

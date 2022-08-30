@@ -4,8 +4,26 @@ public class Computador extends Host{
 
     private ArrayList<TableMac>  tableMac = new ArrayList();
 
+    private Switch aSwitch;
+
     public Computador(String ip, String macAdress) {
         super(ip, macAdress);
+    }
+
+    public ArrayList<TableMac> getTableMac() {
+        return tableMac;
+    }
+
+    public void setTableMac(ArrayList<TableMac> tableMac) {
+        this.tableMac = tableMac;
+    }
+
+    public Switch getaSwitch() {
+        return aSwitch;
+    }
+
+    public void setaSwitch(Switch aSwitch) {
+        this.aSwitch = aSwitch;
     }
 
     @Override
@@ -19,7 +37,7 @@ public class Computador extends Host{
     }
 
 
-    public void sendMessage(String message, String hostIp) {
+    public Package sendMessage(String message, String hostIp) {
         String ipOrigin = this.Ip;
         String ipDestiny = hostIp;
         String macOrigin = this.MacAdress;
@@ -29,7 +47,7 @@ public class Computador extends Host{
 
         Package package1 = new Package(ipOrigin, ipDestiny,macOrigin, macDestiny, payload);
 
-        sendPackage(package1);
+        return package1;
 
     }
 

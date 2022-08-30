@@ -12,6 +12,22 @@ public abstract class Host {
 
     }
 
+    public String getIp() {
+        return Ip;
+    }
+
+    public void setIp(String ip) {
+        Ip = ip;
+    }
+
+    public String getMacAdress() {
+        return MacAdress;
+    }
+
+    public void setMacAdress(String macAdress) {
+        MacAdress = macAdress;
+    }
+
     public abstract void getPackage() ;
 
     public abstract void sendPackage(Package package1);
