@@ -28,13 +28,13 @@ public class Computador extends Host{
     }
 
     @Override
-    public void getPackage() {
+    public void receberPacote(Package aPackage) {
 
     }
 
     @Override
     public void sendPackage(Package package1) {
-
+        this.aSwitch.receber(package1);
     }
 
 
@@ -45,9 +45,8 @@ public class Computador extends Host{
         String macDestiny = this.getMacDestiny();
         String payload = message;
 
-
         Package package1 = new Package(ipOrigin, ipDestiny,macOrigin, macDestiny, payload);
-        this.aSwitch.receber(package1);
+        this.sendPackage(package1);
 
     }
 

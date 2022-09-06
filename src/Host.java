@@ -30,7 +30,7 @@ public abstract class Host {
         MacAdress = macAdress;
     }
 
-    public abstract void getPackage() ;
+    public abstract void receberPacote(Package aPackage) ;
 
     public abstract void sendPackage(Package package1);
 

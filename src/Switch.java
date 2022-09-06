@@ -37,7 +37,17 @@ public class Switch {
     }
 
     private void enviar(Package package1) {
-        
+        SwitchPort port = getPortByMacIp(package1.getIpDestiny());
+        port.receberPacote(package1);
+    }
+
+    private SwitchPort getPortByMacIp(String ipDestiny) {
+        for (SwitchPort port: ports){
+            if (port.getIp().equals(ipDestiny)){
+                return port;
+            }
+        }
+        return null;
     }
 
     private void registrarTabelaMac(String ipOrigin, String macOrigin) {

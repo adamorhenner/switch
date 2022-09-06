@@ -12,7 +12,7 @@ public class SwitchPort extends Host{
     }
 
     @Override
-    public void getPackage() {
+    public void receberPacote(Package aPackage) {
 
     }
 
