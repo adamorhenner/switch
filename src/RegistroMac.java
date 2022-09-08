@@ -3,21 +3,21 @@ import java.util.Objects;
 
 public class RegistroMac {
 
-    String Ip;
+    SwitchPort switchPort;
 
     String MacAdress;
 
-    public RegistroMac(String ip, String macAdress) {
-        Ip = ip;
+    public RegistroMac(SwitchPort switchPort, String macAdress) {
+        this.switchPort = switchPort;
         MacAdress = macAdress;
     }
 
-    public String getIp() {
-        return Ip;
+    public SwitchPort getSwitchPort() {
+        return switchPort;
     }
 
-    public void setIp(String ip) {
-        Ip = ip;
+    public void setSwitchPort(SwitchPort switchPort) {
+        this.switchPort = switchPort;
     }
 
     public String getMacAdress() {
@@ -33,11 +33,11 @@ public class RegistroMac {
         if (this == o) return true;
         if (!(o instanceof RegistroMac)) return false;
         RegistroMac that = (RegistroMac) o;
-        return getIp().equals(that.getIp()) && getMacAdress().equals(that.getMacAdress());
+        return getSwitchPort().equals(that.getSwitchPort()) && getMacAdress().equals(that.getMacAdress());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIp(), getMacAdress());
+        return Objects.hash(getSwitchPort(), getMacAdress());
     }
 }

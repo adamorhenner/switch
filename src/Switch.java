@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Switch {
+public class Switch implements Host{
 
     private ArrayList<SwitchPort> ports = new ArrayList();
 
-    private Set<RegistroMac> tabelaMac = new HashSet<RegistroMac>();
+    private Set<RegistroMac> tabelaMacs = new HashSet<RegistroMac>();
 
     private Integer qtdPorts;
 
@@ -31,27 +31,35 @@ public class Switch {
         }
     }
 
-    public void receber(Package package1) {
-        this.registrarTabelaMac(package1.getIpOrigin(),package1.getMacOrigin());
-        this.enviar(package1);
+    public void receberPacote(Package package1) {
+        this.registrarTabelaMac(SwitchPort switchPort,package1.getMacOrigin());
+        this.sendPackage(package1);
     }
 
-    private void enviar(Package package1) {
+    public void sendPackage(Package package1) {
         SwitchPort port = getPortByMacIp(package1.getIpDestiny());
         port.receberPacote(package1);
     }
 
-    private SwitchPort getPortByMacIp(String ipDestiny) {
-        for (SwitchPort port: ports){
-            if (port.getIp().equals(ipDestiny)){
-                return port;
+    @Override
+    public Boolean getItsMe(String ip) {
+        for(SwitchPort port:ports){
+
+        }
+        return null;
+    }
+
+    private SwitchPort getPortByMacAdress(String macAdress) {
+        for (RegistroMac registroMac : tabelaMacs){
+            if (registroMac.getMacAdress().equals(macAdress)){
+                return registroMac.get;
             }
         }
         return null;
     }
 
-    private void registrarTabelaMac(String ipOrigin, String macOrigin) {
-        RegistroMac registroMac = new RegistroMac(ipOrigin,macOrigin);
-        this.tabelaMac.add(registroMac);
+    private void registrarTabelaMac(SwitchPort switchPort, String macOrigin) {
+        RegistroMac registroMac = new RegistroMac(switchPort,macOrigin);
+        this.tabelaMacs.add(registroMac);
     }
 }

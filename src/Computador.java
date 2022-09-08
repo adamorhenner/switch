@@ -1,7 +1,36 @@
 
 import java.util.ArrayList;
 
-public class Computador extends Host{
+public class Computador implements Host{
+
+    String Ip;
+
+    String MacAdress;
+
+    public String getIp() {
+        return Ip;
+    }
+
+    public void setIp(String ip) {
+        Ip = ip;
+    }
+
+
+    public String getMacAdress() {
+        return MacAdress;
+    }
+
+    public void setMacAdress(String macAdress) {
+        MacAdress = macAdress;
+    }
+
+    public ArrayList<RegistroMac> getRegistroMac() {
+        return registroMac;
+    }
+
+    public void setRegistroMac(ArrayList<RegistroMac> registroMac) {
+        this.registroMac = registroMac;
+    }
 
     private ArrayList<RegistroMac> registroMac = new ArrayList();
 
@@ -34,9 +63,13 @@ public class Computador extends Host{
 
     @Override
     public void sendPackage(Package package1) {
-        this.aSwitch.receber(package1);
+        this.aSwitch.receberPacote(package1);
     }
 
+    @Override
+    public Boolean getItsMe(String ip) {
+        return null;
+    }
 
     public void sendMessage(String message, String hostIp) {
         String ipOrigin = this.Ip;
