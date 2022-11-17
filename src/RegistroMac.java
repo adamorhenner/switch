@@ -1,43 +1,40 @@
+public class RegistroMAC {
+    
+    private String enderecoMAC;
+    private PortaSwitch porta;
 
-import java.util.Objects;
 
-public class RegistroMac {
-
-    SwitchPort switchPort;
-
-    String MacAdress;
-
-    public RegistroMac(SwitchPort switchPort, String macAdress) {
-        this.switchPort = switchPort;
-        MacAdress = macAdress;
+     public RegistroMAC(String enderecoMAC, PortaSwitch porta) {
+        this.enderecoMAC = enderecoMAC;
+        this.porta = porta;
     }
 
-    public SwitchPort getSwitchPort() {
-        return switchPort;
+    /**
+     * @return String return the enderecoMAC
+     */
+    public String getEnderecoMAC() {
+        return enderecoMAC;
     }
 
-    public void setSwitchPort(SwitchPort switchPort) {
-        this.switchPort = switchPort;
+    /**
+     * @param enderecoMAC the enderecoMAC to set
+     */
+    public void setEnderecoMAC(String enderecoMAC) {
+        this.enderecoMAC = enderecoMAC;
     }
 
-    public String getMacAdress() {
-        return MacAdress;
+    /**
+     * @return PortaSwitch return the porta
+     */
+    public PortaSwitch getPorta() {
+        return porta;
     }
 
-    public void setMacAdress(String macAdress) {
-        MacAdress = macAdress;
+    /**
+     * @param porta the porta to set
+     */
+    public void setPorta(PortaSwitch porta) {
+        this.porta = porta;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RegistroMac)) return false;
-        RegistroMac that = (RegistroMac) o;
-        return getSwitchPort().equals(that.getSwitchPort()) && getMacAdress().equals(that.getMacAdress());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getSwitchPort(), getMacAdress());
-    }
 }

@@ -1,41 +1,78 @@
+import java.util.ArrayList;
 
 public class Main {
 
+    private static Computador computador1;
+    private static Computador computador2;
+    private static String IP_COMPUTADOR_1 = "198.168.1.1";
+    private static String IP_COMPUTADOR_2 = "192.168.1.2";
+
+    private static Switch switch1;
+    private static Switch switch2;
 
     public static void main(String[] args) {
 
-        Rede rede = new Rede();
+        criar_switchs();
+        criar_computadores();
+        conectar_componentes();
 
-        String IP_HOST_1 = "123.456";
-        String IP_HOST_2 = "123.654";
+        computador1.enviar_mensagem("Bora jogar?", IP_COMPUTADOR_2);
+        computador2.enviar_mensagem("Sim!!!", IP_COMPUTADOR_1);
 
-        String MAC_ADRESS_H1 = "h1";
-        String MAC_ADRESS_H2 = "h2";
-
-
-        Computador host1 = new Computador(IP_HOST_1, MAC_ADRESS_H1);
-        Computador host2 = new Computador(IP_HOST_2, MAC_ADRESS_H2);
-
-        Switch switch1 = new Switch();
-
-        Conect conectHost1 = criarConexao(switch1, host1);
-        switch1 = conectHost1.getaSwitch();
-        host1 = conectHost1.getComputador();
-
-
-        Conect conectHost2 = criarConexao(switch1, host2);
-        switch1 = conectHost2.getaSwitch();
-        host2 = conectHost2.getComputador();
-
-        host1.sendMessage("oi",IP_HOST_2);
-
-
+        System.out.println("Tá funcionando");
 
     }
 
+    public static void criar_computadores() {
 
-    public static Conect criarConexao(Switch aSwitch, Computador host){
-        return new Conect(aSwitch,host);
+        computador1 = new Computador("Matheus Corno Manso", IP_COMPUTADOR_1, "H1");
+        computador2 = new Computador("Adamor Comedor de Casada",IP_COMPUTADOR_2, "H2");
+
+    }
+
+    public static void criar_switchs() {
+
+        criar_switch1();
+        criar_switch2();
+    }
+
+    public static void criar_switch1() {
+
+        PortaSwitch porta1 = new PortaSwitch(1, "PORTA:1:1");
+        PortaSwitch porta2 = new PortaSwitch(2, "PORTA:1:2");
+
+        ArrayList<PortaSwitch> portas = new ArrayList();
+        portas.add(porta1);
+        portas.add(porta2);
+
+        switch1 = new Switch(portas);
+
+    }
+
+    public static void criar_switch2() {
+
+        PortaSwitch porta1 = new PortaSwitch(1, "PORTA:2:1");
+        PortaSwitch porta2 = new PortaSwitch(2, "PORTA:2:2");
+
+        ArrayList<PortaSwitch> portas = new ArrayList();
+        portas.add(porta1);
+        portas.add(porta2);
+
+        switch2 = new Switch(portas);
+
+    }
+
+    public static void conectar_componentes() {
+
+        switch1.conectarHost(computador1, 1);
+        switch1.conectarHost(switch2, 2);
+
+        switch2.conectarHost(computador2, 1);
+        switch2.conectarHost(switch1, 2);
+
+        computador1.setConexao(switch1);
+        computador2.setConexao(switch2);
+
     }
 
 }

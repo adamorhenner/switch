@@ -1,65 +1,126 @@
-
-
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
-public class Switch implements Host{
+public class Switch implements Conexao, ProtocoloARPImplementacao {
 
-    private ArrayList<SwitchPort> ports = new ArrayList();
+    private ArrayList<PortaSwitch> portas = new ArrayList();
+    private ArrayList<RegistroMAC> tabelaMAC = new ArrayList();
 
-    private Set<RegistroMac> tabelaMacs = new HashSet<RegistroMac>();
 
-    private Integer qtdPorts;
-
-    public Switch(Integer qtdPorts) {
-        this.qtdPorts = qtdPorts;
-    }
-
-    public Switch() {
-        this.qtdPorts = 10;
-    }
-
-    public void addHost(Host host1) {
-        Integer qntPorts = this.ports.size();
-        if (qntPorts >= this.qtdPorts){
-            System.out.println("Quantidade Maxima de portas Conectadas");
-        } else {
-            qntPorts = qntPorts + 1;
-            SwitchPort port1 = new SwitchPort(qntPorts, host1);
-            this.ports.add(port1);
-        }
-    }
-
-    public void receberPacote(Package package1) {
-        this.registrarTabelaMac(SwitchPort switchPort,package1.getMacOrigin());
-        this.sendPackage(package1);
-    }
-
-    public void sendPackage(Package package1) {
-        SwitchPort port = getPortByMacIp(package1.getIpDestiny());
-        port.receberPacote(package1);
+    public Switch(ArrayList<PortaSwitch> portas) {
+        this.portas = portas;
     }
 
     @Override
-    public Boolean getItsMe(String ip) {
-        for(SwitchPort port:ports){
+    public boolean verificarEnderecoMAC(String enderecoMAC, Host host) {
 
+        boolean souEu = false;
+
+         for (PortaSwitch porta : this.portas){
+
+            if(porta.getHost() != host){
+                if(porta.getHost().verificarEnderecoMAC(enderecoMAC, porta.getHost())){
+                    souEu = true;
+                    break;
+                }
+            }
+ 
         }
-        return null;
+
+        return souEu;
+   
     }
 
-    private SwitchPort getPortByMacAdress(String macAdress) {
-        for (RegistroMac registroMac : tabelaMacs){
-            if (registroMac.getMacAdress().equals(macAdress)){
-                return registroMac.get;
+    @Override
+    public void broadcast(Pacote pacote) {
+        
+        System.out.println("Realizando Broadcast...");
+
+        for(PortaSwitch porta: this.portas){
+
+            if(!porta.getHost().verificarEnderecoMAC(pacote.getEnderecoMACOrigem(), this)){
+
+                Host host = porta.getHost();
+                host.receberPacote(pacote);
+
             }
         }
-        return null;
+
     }
 
-    private void registrarTabelaMac(SwitchPort switchPort, String macOrigin) {
-        RegistroMac registroMac = new RegistroMac(switchPort,macOrigin);
-        this.tabelaMacs.add(registroMac);
+    @Override
+    public void receberPacote(Pacote pacote) {
+
+        gravarNaTabelaMac(pacote);
+
+        if(pacote.getenderecoMACDestino().equals(ProtocoloARP.broadcastMAC)){
+            broadcast(pacote);
+        }else{
+            enviarPacote(pacote);
+        }
+        
     }
+
+    public void gravarNaTabelaMac(Pacote pacote){
+
+        for (PortaSwitch porta : this.portas){
+            if(porta.getHost().verificarEnderecoMAC(pacote.getEnderecoMACOrigem(), this)){
+                RegistroMAC registroMAC = new RegistroMAC(pacote.getEnderecoMACOrigem(), porta);
+                this.tabelaMAC.add(registroMAC);
+                break;
+            }
+        }
+
+    }
+
+    @Override
+    public void enviarPacote(Pacote pacote) {
+
+        for(RegistroMAC registroMAC : this.tabelaMAC){
+            if(registroMAC.getEnderecoMAC().equals(pacote.getenderecoMACDestino())){
+                registroMAC.getPorta().getHost().receberPacote(pacote);
+                break;
+            }
+        }
+        
+    }
+
+    public void conectarHost(Host host, Integer numeroPorta){
+
+        for(PortaSwitch porta: this.portas){
+            if (porta.getNumeroIdentificacao() == numeroPorta){
+                porta.setHost(host);
+                break;
+            }
+        }
+
+    }
+
+    /**
+     * @return ArrayList<PortaSwitch> return the portas
+     */
+    public ArrayList<PortaSwitch> getPortas() {
+        return portas;
+    }
+
+    /**
+     * @param portas the portas to set
+     */
+    public void setPortas(ArrayList<PortaSwitch> portas) {
+        this.portas = portas;
+    }
+
+    /**
+     * @return ArrayList<RegistroMAC> return the tabelaMAC
+     */
+    public ArrayList<RegistroMAC> getTabelaMAC() {
+        return tabelaMAC;
+    }
+
+    /**
+     * @param tabelaMAC the tabelaMAC to set
+     */
+    public void setTabelaMAC(ArrayList<RegistroMAC> tabelaMAC) {
+        this.tabelaMAC = tabelaMAC;
+    }
+
 }

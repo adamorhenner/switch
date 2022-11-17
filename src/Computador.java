@@ -1,90 +1,200 @@
-
 import java.util.ArrayList;
 
 public class Computador implements Host{
+    
+    private String nome;
+    private String ip;
+    private String enderecoMAC;
+    private ProtocoloARP protocolo;
+    private Conexao conexao;
 
-    String Ip;
 
-    String MacAdress;
+    public Computador(String nome, String ip, String enderecoMac) {
+        this.nome = nome;
+        this.ip = ip;
+        this.enderecoMAC = enderecoMac;
+        this.protocolo = new ProtocoloARP();
+    }
+
+    public void enviar_mensagem(String mensagem, String ipDestino) {
+
+        if (this.ip.equals(ipDestino)){
+            System.out.println("Erro: Ip de Destino igual o de Origem!");
+        }else{
+
+        System.out.println("Enviando mensagem...");
+
+        String enderecoMACDestino = resgatarEnderecoMacDestino(ipDestino);
+
+        Pacote pacote = new Pacote( this.getIp(), this.getEnderecoMac(), ipDestino, enderecoMACDestino, mensagem);
+
+        enviarPacote(pacote);
+
+        }
+
+    }
+
+    public String resgatarEnderecoMacDestino(String ipDestino){
+
+        System.out.println("Buscando Endereço MAC de Destino...");
+
+        String enderecoMACDestino = null;
+
+        enderecoMACDestino = resgatarPorTabelaMac(ipDestino);
+        if (enderecoMACDestino == null){
+            enderecoMACDestino = resgatarPorConexao(ipDestino);
+        }
+
+        return enderecoMACDestino;
+
+    }
+
+    public String resgatarPorTabelaMac(String ipDestino){
+
+        String enderecoMACDestino = null;
+
+        System.out.println("Buscando Endereço MAC de Destino por Tabela MAC...");
+
+        ArrayList<RegistroARP> tabelaARP = new ArrayList();
+
+        tabelaARP = this.protocolo.getTabelaARP();
+
+        if(!tabelaARP.isEmpty()){
+            for(RegistroARP registroARP : tabelaARP ){
+                if (registroARP.getIp().equals(ipDestino)){
+                    enderecoMACDestino = registroARP.getEnderecoMAC();
+                    break;
+                }
+            }
+        }
+
+        return enderecoMACDestino; 
+
+    }
+
+    public String resgatarPorConexao(String ipDestino){
+
+        System.out.println("Buscando Endereço MAC de Destino por Conexão...");
+
+        Pacote pacote_envio = new Pacote( this.getIp(), this.getEnderecoMac(), ipDestino, ProtocoloARP.broadcastMAC, "Protocolo ARP");
+
+        this.conexao.receberPacote(pacote_envio);
+        
+        return this.resgatarPorTabelaMac(ipDestino); 
+
+    }
+
+    @Override
+    public boolean verificarEnderecoMAC(String enderecoMAC, Host host){
+
+        boolean souEu = false;
+
+        if (this.enderecoMAC.equals(enderecoMAC)){
+            souEu = true;
+        }
+
+        return souEu;
+
+    }
+
+    public void enviarPacote(Pacote pacote){
+        this.conexao.receberPacote(pacote);
+    }
+
+    public void receberPacote(Pacote pacote){
+
+        gravarNaTabelaARP(pacote.getEnderecoMACOrigem(), pacote.getIpOrigem());
+
+        Mensagem.pacoteRecebido(this.nome, pacote);
+
+        if(!pacote.getPayload().equals(ProtocoloARP.payloadSucesso)){
+
+            Pacote pacote_confirmacao = new Pacote(this.ip, this.enderecoMAC, pacote.getIpOrigem(), pacote.getEnderecoMACOrigem(), ProtocoloARP.payloadSucesso
+            );
+
+            enviarPacote(pacote_confirmacao);
+
+        }
+
+    }
+
+    private void gravarNaTabelaARP(String enderecoMac, String ip){
+
+        RegistroARP registroARP = new RegistroARP(enderecoMac, ip);
+        this.protocolo.getTabelaARP().add(registroARP);
+
+    }
+
+    public String getEnderecoMac() {
+        return enderecoMAC;
+    }
+
+    public void setEnderecoMac(String enderecoMac) {
+        this.enderecoMAC = enderecoMac;
+    }
 
     public String getIp() {
-        return Ip;
+        return ip;
     }
 
     public void setIp(String ip) {
-        Ip = ip;
+        this.ip = ip;
     }
 
-
-    public String getMacAdress() {
-        return MacAdress;
+    /**
+     * @return String return the enderecoMAC
+     */
+    public String getEnderecoMAC() {
+        return enderecoMAC;
     }
 
-    public void setMacAdress(String macAdress) {
-        MacAdress = macAdress;
+    /**
+     * @param enderecoMAC the enderecoMAC to set
+     */
+    public void setEnderecoMAC(String enderecoMAC) {
+        this.enderecoMAC = enderecoMAC;
     }
 
-    public ArrayList<RegistroMac> getRegistroMac() {
-        return registroMac;
+    /**
+     * @return ProtocoloARP return the protocolo
+     */
+    public ProtocoloARP getProtocolo() {
+        return protocolo;
     }
 
-    public void setRegistroMac(ArrayList<RegistroMac> registroMac) {
-        this.registroMac = registroMac;
+    /**
+     * @param protocolo the protocolo to set
+     */
+    public void setProtocolo(ProtocoloARP protocolo) {
+        this.protocolo = protocolo;
     }
 
-    private ArrayList<RegistroMac> registroMac = new ArrayList();
-
-    private Switch aSwitch;
-
-    public Computador(String ip, String macAdress) {
-        super(ip, macAdress);
+    /**
+     * @return Conexao return the conexao
+     */
+    public Conexao getConexao() {
+        return conexao;
     }
 
-    public ArrayList<RegistroMac> getTableMac() {
-        return registroMac;
+    /**
+     * @param conexao the conexao to set
+     */
+    public void setConexao(Conexao conexao) {
+        this.conexao = conexao;
     }
 
-    public void setTableMac(ArrayList<RegistroMac> registroMac) {
-        this.registroMac = registroMac;
+    /**
+     * @return String return the nome
+     */
+    public String getNome() {
+        return nome;
     }
 
-    public Switch getaSwitch() {
-        return aSwitch;
+    /**
+     * @param nome the nome to set
+     */
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public void setaSwitch(Switch aSwitch) {
-        this.aSwitch = aSwitch;
-    }
-
-    @Override
-    public void receberPacote(Package aPackage) {
-
-    }
-
-    @Override
-    public void sendPackage(Package package1) {
-        this.aSwitch.receberPacote(package1);
-    }
-
-    @Override
-    public Boolean getItsMe(String ip) {
-        return null;
-    }
-
-    public void sendMessage(String message, String hostIp) {
-        String ipOrigin = this.Ip;
-        String ipDestiny = hostIp;
-        String macOrigin = this.MacAdress;
-        String macDestiny = this.getMacDestiny();
-        String payload = message;
-
-        Package package1 = new Package(ipOrigin, ipDestiny,macOrigin, macDestiny, payload);
-        this.sendPackage(package1);
-
-    }
-
-    private String getMacDestiny() {
-
-        return null;
-    }
 }
