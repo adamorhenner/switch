@@ -1,0 +1,9 @@
+
+7
+java:S1220""Move this file to a named package.8™Äô¨±0
+m	java:S116"SRename this field "IpOrigin" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œËªùÿÿÿÿ
+i	java:S116"TRename this field "IpDestiny" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(âí¯¯
+n	java:S116"TRename this field "MacOrigin" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ßĞü³ÿÿÿÿÿ
+j	java:S116
+"URename this field "MacDestiny" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ç³ç¼
+l	java:S116"RRename this field "Payload" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(µ«·÷ûÿÿÿÿ
